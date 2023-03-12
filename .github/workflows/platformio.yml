@@ -30,7 +30,7 @@ jobs:
     - name: Archive Filesystem
       uses: actions/upload-artifact@v3
       with: 
-        name: esp32-firmware
+        name: esp32-filesystem
         path: .pio/build/${{ env.TARGET }}/littlefs.bin
 
   release:
