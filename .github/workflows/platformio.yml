@@ -21,12 +21,11 @@ jobs:
       with:
         python-version: '3.10'
     - name: Install PlatformIO
-      run: |
-        python -m pip install --upgrade pip
-        pip install --upgrade platformio
-    - name: Run PlatformIO
+      run: pip install --upgrade platformio
+
+    - name: Compile Firmware
       run: pio run -e ${{ env.TARGET }}
-    - name: Archive Firmware
+    - name: Upload Firmware
       uses: actions/upload-artifact@v3
       with: 
         name: esp32-firmware
@@ -35,7 +34,7 @@ jobs:
     - name: Compile Filesystem
       if: steps.check_files.outputs.files_exists == 'true'
       run: pio run --target buildfs
-    - name: Archive Filesystem
+    - name: Upload Filesystem
       if: steps.check_files.outputs.files_exists == 'true'
       uses: actions/upload-artifact@v3
       with: 
