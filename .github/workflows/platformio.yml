@@ -59,8 +59,8 @@ jobs:
         artifacts: ./*/firmware.bin
         generateReleaseNotes: true
         allowUpdates: true
+
     - name: Release Filesystem
-      if: steps.check_files.outputs.files_exists == 'true'
       uses: ncipollo/release-action@v1
       with:
         artifacts: ./*/filesystem.bin
