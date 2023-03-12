@@ -34,12 +34,14 @@ jobs:
     - name: Compile Filesystem
       if: steps.check_files.outputs.files_exists == 'true'
       run: pio run --target buildfs
+    - name: Rename Filesystem file
+      run: mv .pio/build/${{ env.TARGET }}/*fs.bin .pio/build/${{ env.TARGET }}/filesystem.bin
     - name: Upload Filesystem
       if: steps.check_files.outputs.files_exists == 'true'
       uses: actions/upload-artifact@v3
       with: 
         name: esp32-filesystem
-        path: .pio/build/${{ env.TARGET }}/*fs.bin
+        path: .pio/build/${{ env.TARGET }}/filesystem.bin
 
   release:
     needs: build
@@ -50,19 +52,17 @@ jobs:
     steps:
     - name: Download Firmware Files
       uses: actions/download-artifact@v3
-      with:
-        path: release
 
     - name: Release Firmware
       uses: ncipollo/release-action@v1
       with:
-        artifacts: release/*/firmware.bin
+        artifacts: artifact/*/firmware.bin
         generateReleaseNotes: true
         allowUpdates: true
     - name: Release Filesystem
       if: steps.check_files.outputs.files_exists == 'true'
       uses: ncipollo/release-action@v1
       with:
-        artifacts: release/*/*fs.bin
+        artifacts: artifact/*/filesystem.bin
         generateReleaseNotes: true
         allowUpdates: true
