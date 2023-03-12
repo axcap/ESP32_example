@@ -56,13 +56,13 @@ jobs:
     - name: Release Firmware
       uses: ncipollo/release-action@v1
       with:
-        artifacts: artifact/*/firmware.bin
+        artifacts: ./*/firmware.bin
         generateReleaseNotes: true
         allowUpdates: true
     - name: Release Filesystem
       if: steps.check_files.outputs.files_exists == 'true'
       uses: ncipollo/release-action@v1
       with:
-        artifacts: artifact/*/filesystem.bin
+        artifacts: ./*/filesystem.bin
         generateReleaseNotes: true
         allowUpdates: true
