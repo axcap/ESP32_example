@@ -19,11 +19,19 @@ jobs:
         pip install --upgrade platformio
     - name: Run PlatformIO
       run: pio run -e ${{ env.TARGET }}
-    - name: Archive Firmware Files
+    - name: Archive Firmware
       uses: actions/upload-artifact@v3
       with: 
-        name: esp8266-firmware
+        name: esp32-firmware
         path: .pio/build/${{ env.TARGET }}/firmware.bin
+
+    - name: Compile Filesystem
+      run: pio run --target buildfs
+    - name: Archive Filesystem
+      uses: actions/upload-artifact@v3
+      with: 
+        name: esp32-firmware
+        path: .pio/build/${{ env.TARGET }}/littlefs.bin
 
   release:
     needs: build
@@ -38,5 +46,12 @@ jobs:
       uses: ncipollo/release-action@v1
       with:
         artifacts: release/*/firmware.bin
+        generateReleaseNotes: true
+        allowUpdates: true
+
+    - name: Release Filesystem
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: release/*/littlefs.bin
         generateReleaseNotes: true
         allowUpdates: true
