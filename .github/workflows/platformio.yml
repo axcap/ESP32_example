@@ -35,6 +35,7 @@ jobs:
       if: steps.check_files.outputs.files_exists == 'true'
       run: pio run --target buildfs
     - name: Rename Filesystem file
+      if: steps.check_files.outputs.files_exists == 'true'
       run: mv .pio/build/${{ env.TARGET }}/*fs.bin .pio/build/${{ env.TARGET }}/filesystem.bin
     - name: Upload Filesystem
       if: steps.check_files.outputs.files_exists == 'true'
