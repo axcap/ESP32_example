@@ -19,6 +19,8 @@
 #define HOSTNAME "ESP32 OTA"
 #define LED_BUILTIN 13
 
+GitHubOTA GitHubOTA(VERSION, RELEASE_URL, "firmware.bin", "filesystem.bin", "/.fs_update_pending", false);
+
 void setup_wifi();
 void setup()
 {
@@ -26,12 +28,13 @@ void setup()
   pinMode(LED_BUILTIN, OUTPUT);
 
   setup_wifi();
-  init_ota(VERSION);
 }
 
 void loop()
 {
-  handle_ota(RELEASE_URL);
+  // Will check for updates every iteration
+  // probably not what you want to do in real life
+  GitHubOTA.handle();
 
   // Your code goes here
   digitalWrite(LED_BUILTIN, HIGH);  // turn the LED on (HIGH is the voltage level)
