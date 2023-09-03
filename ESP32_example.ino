@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <GitHubOTA.h>
+#include <GitHubFsOTA.h>
 #include "LittleFS.h"
 
 // This string should correspond to github tag used for Releasing (via. Github Actions)
