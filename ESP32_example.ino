@@ -1,5 +1,7 @@
+#include <Arduino.h>
 #include <WiFi.h>
-#include <ota.h>
+#include <GitHubOTA.h>
+#include "LittleFS.h"
 
 // This string should correspond to github tag used for Releasing (via. Github Actions)
 #define VERSION "0.0.1"
@@ -16,26 +18,36 @@
 
 #define SSID ""
 #define PASSWORD ""
-#define HOSTNAME "ESP32 OTA"
+
 #define LED_BUILTIN 13
 
-GitHubOTA GitHubOTA(VERSION, RELEASE_URL, "firmware.bin", "filesystem.bin", "/.fs_update_pending", false);
+GitHubOTA OsOta(VERSION, RELEASE_URL, "firmware.bin", true);
+GitHubFsOTA FsOta(VERSION, RELEASE_URL, "filesystem.bin", true);
 
 void setup_wifi();
+void listRoot();
+
 void setup()
 {
-  Serial.begin(115200);
   pinMode(LED_BUILTIN, OUTPUT);
+  Serial.begin(115200);
+  while(!Serial);
+
+  Serial.printf("Current firmware version: %s\n", VERSION); 
+  Serial.printf("Current filesystem version: %s\n", VERSION); 
+
+  LittleFS.begin();
+  listRoot();
 
   setup_wifi();
+  
+  // Chech for updates
+  FsOta.handle();
+  OsOta.handle();
 }
 
 void loop()
 {
-  // Will check for updates every iteration
-  // probably not what you want to do in real life
-  GitHubOTA.handle();
-
   // Your code goes here
   digitalWrite(LED_BUILTIN, HIGH);  // turn the LED on (HIGH is the voltage level)
   delay(DELAY_MS);                  // wait for a second
@@ -43,9 +55,20 @@ void loop()
   delay(DELAY_MS);                  // wait for a second
 }
 
+void listRoot(){
+  Serial.printf("Listing root directory\r\n");
+
+  File root = LittleFS.open("/", "r");
+  File file = root.openNextFile();
+
+  while(file){
+    Serial.printf("  FILE: %s\r\n", file.name());
+    file = root.openNextFile();
+  }
+}
+
 void setup_wifi(){
   Serial.println("Initialize WiFi");
-  WiFi.hostname(HOSTNAME);
   WiFi.begin(SSID, PASSWORD);
 
   Serial.print("Connecting");
