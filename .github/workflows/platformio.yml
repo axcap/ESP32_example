@@ -1,5 +1,5 @@
 name: Platformio
-on: push
+on: [workflow_dispatch, push]
 
 env:
   TARGET: nodemcu-32s # Must match the value after colon in platformio.ini (line 4: [env:nodemcu-32s])
